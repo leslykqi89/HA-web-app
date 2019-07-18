@@ -79,23 +79,23 @@ Resources:
           !Ref EnvironmentId
       TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/groupRolesCF.yml
 
-    Servers:
-      Type: AWS::CloudFormation::Stack
-      DependsOn: [ Network, SecurityGroupsAndRoles ]
-      Properties:
-        Parameters:
-          EC2KeyName:
-            !Ref EC2KeyName
-          BastionImageId:
-            !Ref BastionImageId
-          EC2ImageId:
-            !Ref EC2ImageId
-          EC2Type:
-            !Ref EC2Type
-          BastionType:
-            !Ref BastionType
-          S3Bucket:
-            !Ref S3Bucket
-          ZipFile:
-            !Ref ZipFile
-        TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/serversCF.yml
+  Servers:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [ Network, SecurityGroupsAndRoles ]
+    Properties:
+      Parameters:
+        EC2KeyName:
+          !Ref EC2KeyName
+        BastionImageId:
+          !Ref BastionImageId
+        EC2ImageId:
+          !Ref EC2ImageId
+        EC2Type:
+          !Ref EC2Type
+        BastionType:
+          !Ref BastionType
+        S3Bucket:
+          !Ref S3Bucket
+        ZipFile:
+          !Ref ZipFile
+      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/serversCF.yml
