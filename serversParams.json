@@ -1,0 +1,38 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "Udacity Project 2"
+    },
+    {
+        "ParameterKey": "EnvironmentId",
+        "ParameterValue": "udacityP2"
+    },
+    {
+        "ParameterKey": "EC2KeyName",
+        "ParameterValue": "MyVPCKP"
+    },
+    {
+        "ParameterKey": "BastionImageId",
+        "ParameterValue": "ami-026c8acd92718196b"
+    },
+    {
+        "ParameterKey": "EC2ImageId",
+        "ParameterValue": "ami-026c8acd92718196b"
+    },
+    {
+        "ParameterKey": "EC2Type",
+        "ParameterValue": "t2.medium"
+    },
+    {
+        "ParameterKey": "BastionType",
+        "ParameterValue": "t2.nano"
+    },
+    {
+        "ParameterKey": "S3Bucket",
+        "ParameterValue": "s3://lquinonez-project2-udagram"
+    },
+    {
+        "ParameterKey": "ZipFile",
+        "ParameterValue": "proj2.zip"
+    }
+]

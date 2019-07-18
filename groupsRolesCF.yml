@@ -1,0 +1,150 @@
+Description: >
+  Lesly Quinonez
+  Template used for create the DevOps Cloud Service - Project 2
+
+Parameters:
+  EnvironmentName:
+    Description: Environment Name
+    Type: String
+  EnvironmentId:
+    Description: Environment ID
+    Type: String
+
+Resources:
+  BastionInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: '/'
+      Policies:
+        - PolicyName: "logs"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: 
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogStreams
+                Resource: 
+                  - arn:aws:logs:*:*:*
+
+  BastionInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: '/'
+      Roles:
+        - !Ref BastionInstanceRole
+
+  EC2InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: '/'
+      Policies:
+        - PolicyName: "s3"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "s3:*"
+                Resource: "*"
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: '/'
+      Roles:
+        - !Ref EC2InstanceRole
+
+  LBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ${EnvironmentName} - Load Balancer Security Group
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentId}-VPCID"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  BastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Bastion instances
+      VpcId: 
+        Fn::ImportValue:
+          !Sub "${EnvironmentId}-VPCID"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  EC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ${EnvironmentName} - EC2 Security Group
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentId}-VPCID"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref LBSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref BastionSecurityGroup
+
+Outputs:
+  BastionInstanceProfile:
+    Description: Profile used for the Bastion instances
+    Value: !Ref BastionInstanceProfile
+    Export:
+      Name: !Sub ${EnvironmentId}-BastionInstanceProfile
+
+  EC2InstanceProfile:
+    Description: Profile used for the EC2 instances
+    Value: !Ref EC2InstanceProfile
+    Export:
+      Name: !Sub ${EnvironmentId}-EC2InstanceProfile
+
+  LBSecurityGroup:
+    Description: Security Group for Load Balancer
+    Value: !Ref LBSecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentId}-LBSecurityGroup
+
+  BastionSecurityGroup:
+    Description: Security Group for Bastion
+    Value: !Ref BastionSecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentId}-BastionSecurityGroup
+
+  EC2SecurityGroup:
+    Description: Security Group for the EC2 instances
+    Value: !Ref EC2SecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentId}-EC2SecurityGroup
+  
