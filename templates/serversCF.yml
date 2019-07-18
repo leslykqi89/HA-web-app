@@ -89,7 +89,7 @@ Resources:
         Fn::Split:
           - ","
           - Fn::ImportValue:
-              !Sub "${EnvironmentId}-PRIV-NET"
+              !Sub "${EnvironmentId}-PUB-NET"
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
           Value: 60
