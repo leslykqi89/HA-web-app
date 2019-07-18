@@ -1,0 +1,101 @@
+Description: >
+  Lesly Quinonez
+  Master template that calls all the templates related to this project.
+
+Parameters:
+  EnvironmentName:
+    Description: Environment Name
+    Type: String
+  VpcCIDR:
+    Description: CIDR used for the VPC.
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnet1CIDR:
+    Description: CIDR used for the public subnet (AZ1)
+    Type: String 
+  PublicSubnet2CIDR:
+    Description: CIDR used for the public subnet (AZ2)
+    Type: String 
+  PrivateSubnet1CIDR:
+    Description: CIDR used for the private subnet 1 (AZ1)
+    Type: String 
+  PrivateSubnet2CIDR:
+    Description: CIDR used for the private subnet 2 (AZ2)
+    Type: String 
+  EnvironmentId:
+    Description: ID used for the outputs
+    Type: String
+  EC2KeyName:
+    Description: Name of the EC2 KeyPair used by the Bastion instance.
+    Type: AWS::EC2::KeyPair::KeyName
+  BastionImageId:
+    Description: Bastion AMI used.
+    Type: String
+  EC2ImageId:
+    Description: Image used for the EC2 instances
+    Type: String
+  EC2Type:
+    Description: Type of the EC2 used
+    Type: String
+  BastionType:
+    Description: Type of the Bastion instances
+    Type: String
+  S3Bucket:
+    Description: Bucket URL (Ex. s3://<bucket-name>)
+    Type: String
+  ZipFile:
+    Description: Zip file path
+    Type: String
+
+Resources:
+  Network:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        EnvironmentName:
+          !Ref EnvironmentName
+        VpcCIDR:
+          !Ref VpcCIDR
+        PublicSubnet1CIDR:
+          !Ref PublicSubnet1CIDR
+        PublicSubnet2CIDR:
+          !Ref PublicSubnet2CIDR
+        PrivateSubnet1CIDR:
+          !Ref PrivateSubnet1CIDR
+        PrivateSubnet2CIDR:
+          !Ref PrivateSubnet2CIDR
+        EnvironmentId:
+          !Ref EnvironmentId
+      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/networkingCF.yml
+
+  SecurityGroupsAndRoles:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: [ Network ]
+    Properties:
+      Parameters:
+        EnvironmentName:
+          !Ref EnvironmentName
+        EnvironmentId:
+          !Ref EnvironmentId
+      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/groupRolesCF.yml
+
+    Servers:
+      Type: AWS::CloudFormation::Stack
+      DependsOn: [ Network, SecurityGroupsAndRoles ]
+      Properties:
+        Parameters:
+          EC2KeyName:
+            !Ref EC2KeyName
+          BastionImageId:
+            !Ref BastionImageId
+          EC2ImageId:
+            !Ref EC2ImageId
+          EC2Type:
+            !Ref EC2Type
+          BastionType:
+            !Ref BastionType
+          S3Bucket:
+            !Ref S3Bucket
+          ZipFile:
+            !Ref ZipFile
+        TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/serversCF.yml

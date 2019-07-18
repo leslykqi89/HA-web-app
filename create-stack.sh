@@ -1,7 +1,7 @@
 #!/bin/bash
 
 aws cloudformation create-stack \
---stack-name NetworkingProject2 \
---template-body file://networkingCF.yml \
---parameters file://networkingParams.json \
+--stack-name Udagram \
+--template-body file://templates/masterTemplate.yml \
+--parameters file://parameters/masterParameters.json \
 --region=us-east-1
