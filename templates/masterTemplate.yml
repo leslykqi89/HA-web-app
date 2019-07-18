@@ -66,7 +66,7 @@ Resources:
           !Ref PrivateSubnet2CIDR
         EnvironmentId:
           !Ref EnvironmentId
-      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/networkingCF.yml
+      TemplateURL: https://lquinonez-proj2-templates.s3.amazonaws.com/networkingCF.yml
 
   SecurityGroupsAndRoles:
     Type: AWS::CloudFormation::Stack
@@ -77,7 +77,7 @@ Resources:
           !Ref EnvironmentName
         EnvironmentId:
           !Ref EnvironmentId
-      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/groupRolesCF.yml
+      TemplateURL: https://lquinonez-proj2-templates.s3.amazonaws.com/groupsRolesCF.yml
 
   Servers:
     Type: AWS::CloudFormation::Stack
@@ -98,4 +98,15 @@ Resources:
           !Ref S3Bucket
         ZipFile:
           !Ref ZipFile
-      TemplateURL: https://raw.githubusercontent.com/leslykqi89/HA-web-app/master/templates/serversCF.yml
+        EnvironmentName:
+          !Ref EnvironmentName
+        EnvironmentId:
+          !Ref EnvironmentId
+      TemplateURL: https://lquinonez-proj2-templates.s3.amazonaws.com/serversCF.yml
+
+Outputs:
+  ELBHostName:
+    Description: The URL of the application
+    Value: !GetAtt [ Servers, Outputs.ELBHostName]
+    Export: 
+      Name: !Sub ${EnvironmentId}-URL
