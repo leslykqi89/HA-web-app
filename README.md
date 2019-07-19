@@ -34,7 +34,7 @@ These are the steps used to create the infrastructure depicted in the Overview s
 
 `./create-stack.sh`
 
-If you want to update your stack, you can use the update script as follow:
+In order to update the stack, you can use the update script as follow:
 
 `./update-stack.sh`
 
